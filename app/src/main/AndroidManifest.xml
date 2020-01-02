@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.GenerateActivity"></activity>
+        <activity android:name=".ui.ImgActivity"></activity>
+        <activity android:name=".ui.PrintActivity" />
+        <activity android:name=".ui.GenerateActivity" />
         <activity android:name=".ui.GpsActivity" />
         <activity
             android:name=".ui.ScanActivity"

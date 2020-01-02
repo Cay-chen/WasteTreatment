@@ -1,4 +1,4 @@
-package com.waste.treatment.print;
+package hardware.print;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,17 +10,7 @@ import android.graphics.RectF;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
-/************************************************************
- * Copyright 2000-2066 Olc Corp., Ltd.
- * All rights reserved.
- * <p>
- * Description     : The Main activity for the Camera application
- * History        :( ID, Date, Author, Description)
- * v1.0, 2017/1/20,  Administrator, create
- ************************************************************/
-
 public class printer {
-
     static public native int Open();
 
     static public native int Close();
@@ -103,7 +93,7 @@ public class printer {
             can.drawRect(0, 0, mMaxWidth, hi, mPaint);
         }
     }
-    public void PrintLineString(String str, int textSize, int nLeft,boolean bBold) {
+    public void PrintLineString(String str, int textSize, int nLeft, boolean bBold) {
         if (mLineBitmap != null) {
             mPaint.setTextSize(textSize);
             mPaint.setFakeBoldText(bBold);
@@ -112,7 +102,7 @@ public class printer {
         }
     }
 
-    public void PrintLineStringByType(String str, int textSize, PrintType type,boolean bBold) {
+    public void PrintLineStringByType(String str, int textSize, printer.PrintType type, boolean bBold) {
         if (mLineBitmap != null) {
             float x=0;
             float y = 0;
@@ -161,7 +151,7 @@ public class printer {
         }
     }
 
-    void PrintLineOneString(String str,float x, float y, Bitmap bmp)
+    void PrintLineOneString(String str, float x, float y, Bitmap bmp)
     {
         if (mLineBitmap != null) {
             mPaint.setColor(Color.BLACK);
@@ -177,7 +167,7 @@ public class printer {
             mLineBitmap=null;
         }
     }
-    public void PrintStringEx(String str, int textSize, boolean bUnderline, boolean bBold, PrintType type) {
+    public void PrintStringEx(String str, int textSize, boolean bUnderline, boolean bBold, printer.PrintType type) {
         mStrPrint = "";
         String strPrint = mStrPrint + str;
 
@@ -320,7 +310,7 @@ public class printer {
         return true;
     }
 
-    void PrintOneString(Canvas can, Paint paint, String str, int textHeight, Bitmap bmp, PrintType type) {
+    void PrintOneString(Canvas can, Paint paint, String str, int textHeight, Bitmap bmp, printer.PrintType type) {
         paint.setColor(Color.WHITE);
 
         can.drawRect(new Rect(0, 0, mMaxWidth, textHeight), paint);
@@ -372,7 +362,7 @@ public class printer {
         doHardwarePrint(bmp);
     }
 
-    public void PrintBitmap(final Bitmap bm,int x,int y) {
+    public void PrintBitmap(final Bitmap bm, int x, int y) {
         Bitmap bmp = Bitmap.createBitmap(mMaxWidth, bm.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         Paint paint = new Paint();
@@ -384,9 +374,9 @@ public class printer {
     }
 
     /*
-    * Print bitmap In center of Lable Paper
-    * */
-    public void PrintBitmapAtCenter(Bitmap bm,int labelWidth,int labelHeight) {
+     * Print bitmap In center of Lable Paper
+     * */
+    public void PrintBitmapAtCenter(Bitmap bm, int labelWidth, int labelHeight) {
         Bitmap bmp = Bitmap.createBitmap(mMaxWidth,labelHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         Paint paint = new Paint();
@@ -429,7 +419,8 @@ public class printer {
 
     public void printBlankLine(int height){
         PrintLineInit(height);
-        PrintStringEx("",height,false,false, PrintType.Centering);
+        PrintStringEx("",height,false,false, printer.PrintType.Centering);
         PrintLineEnd();
     }
 }
+

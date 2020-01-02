@@ -40,6 +40,20 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        mainBinding.printBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,PrintActivity.class));
+
+            }
+        });
+        mainBinding.imgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,ImgActivity.class));
+
+            }
+        });
 
 
     }

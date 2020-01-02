@@ -1,4 +1,4 @@
-package com.waste.treatment.print;
+package hardware.print;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,7 +12,7 @@ public class printBroadcastReceiver extends BroadcastReceiver {
 	public void onReceive(Context arg0, Intent arg1) {
 		// TODO Auto-generated method stub
 		Toast.makeText(arg0, arg1.getAction(), Toast.LENGTH_SHORT).show();
-		if(arg1.getAction()=="com.printer.printerror"){
+		if(arg1.getAction()=="com.printer222.printerror"){
 			Log.d("print", "out of paper");
 		}
 	}
