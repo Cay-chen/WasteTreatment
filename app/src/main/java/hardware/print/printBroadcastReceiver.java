@@ -10,9 +10,8 @@ public class printBroadcastReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context arg0, Intent arg1) {
-		// TODO Auto-generated method stub
 		Toast.makeText(arg0, arg1.getAction(), Toast.LENGTH_SHORT).show();
-		if(arg1.getAction()=="com.printer222.printerror"){
+		if(arg1.getAction()=="com.printer.printerror"){
 			Log.d("print", "out of paper");
 		}
 	}

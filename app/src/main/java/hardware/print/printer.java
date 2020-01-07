@@ -1,5 +1,6 @@
 package hardware.print;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,30 +9,62 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
 
+/************************************************************
+ * Copyright 2000-2066 Olc Corp., Ltd.
+ * All rights reserved.
+ * <p>
+ * Description     : The Main activity for the Camera application
+ * History        :( ID, Date, Author, Description)
+ * v1.0, 2017/1/20,  Administrator, create
+ ************************************************************/
 public class printer {
-    static public native int Open();
-
-    static public native int Close();
-
-    static public native int Step(byte bStep);
-
-    static public native int Unreeling(byte bStep);
-
+    //*****************************Android 7.1***************************************
+    public int OpenN(Context context) {
+        return 1;
+    }
+    public int CloseN() {
+        return 0;
+    }
+    public int StepN(byte bStep) {
+        return -1;
+    }
+    public int UnreelingN(byte bStep) {
+        return -1;
+    }
+    public void GoToNextPageN() {}
+    //public int PrintImage(short[] data)
+    public int PrintImageExN(byte[] data, int nBit) { return -1; }
+    public int PrintString24N(byte[] data) {
+        return -1;
+    }
+    public int IsReadyN() {
+        return -1;
+    }
+    public int SetGrayLevelN(byte blevel) {
+        return -1;
+    }
+    public int ReadDataN(byte[] data) {
+        return -1;
+    }
+    public int ReadDataExN(byte[] data, int noffset, int ncount) {
+        return -1;
+    }
+    //******************************Android 7.1***********************************
+//**************************************Anroid 5.1********************************
+    static public native int  Open();
+    static public native int  Close();
+    static public native int  Step(byte bStep);
+    static public native int  Unreeling(byte bStep);
     static public native void GoToNextPage();
-
     static public native int PrintImage(short[] data);
-
     static public native int PrintImageEx(byte[] data,int nBit);
-
     static public native int PrintString24(byte[] data);
-
     static public native int SetGrayLevel(byte blevel);
-
     static {
         System.loadLibrary("hardware-print");
     }
+
     static String[] g_str = { "00", "01", "02", "03", "04", "05", "06", "07",
             "08", "09", "0A", "0B", "0C", "0D", "0E", "0F", "10", "11", "12",
             "13", "14", "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D",
@@ -59,7 +92,6 @@ public class printer {
     public enum PrintType
     {
         Left,
-        // just Horizontal center
         Centering,
         VerticalCentering,
         VerticalHorizontalCentering,
@@ -73,6 +105,7 @@ public class printer {
     private String mStrPrint = "";
     private int mLineMaxTextSize = 0;
     private Bitmap mLineBitmap = null;
+    private static String TAG="printer";
 
     public Paint GetPaint() {
         return mPaint;
@@ -93,7 +126,7 @@ public class printer {
             can.drawRect(0, 0, mMaxWidth, hi, mPaint);
         }
     }
-    public void PrintLineString(String str, int textSize, int nLeft, boolean bBold) {
+    public void PrintLineString(String str, int textSize, int nLeft,boolean bBold) {
         if (mLineBitmap != null) {
             mPaint.setTextSize(textSize);
             mPaint.setFakeBoldText(bBold);
@@ -102,7 +135,7 @@ public class printer {
         }
     }
 
-    public void PrintLineStringByType(String str, int textSize, printer.PrintType type, boolean bBold) {
+    public void PrintLineString(String str, int textSize, PrintType type,boolean bBold) {
         if (mLineBitmap != null) {
             float x=0;
             float y = 0;
@@ -151,7 +184,56 @@ public class printer {
         }
     }
 
-    void PrintLineOneString(String str, float x, float y, Bitmap bmp)
+    public void PrintLineStringByType(String str, int textSize, PrintType type,boolean bBold) {
+        if (mLineBitmap != null) {
+            float x=0;
+            float y = 0;
+            mPaint.setTextSize(textSize);
+            mPaint.setFakeBoldText(bBold);
+
+            Paint.FontMetrics font = mPaint.getFontMetrics();
+            int textHeight = (int) Math.ceil(font.descent - font.ascent);
+            switch(type)
+            {
+                case Left:
+                    x=0;
+                    y = Math.abs(mPaint.ascent());
+                    break;
+                case VerticalCentering:
+                    x=0;
+                    y = textHeight/2+(Math.abs(mPaint.ascent())-mPaint.descent())/2;
+                    break;
+                case VerticalHorizontalCentering:
+                    x=(mMaxWidth-mPaint.measureText(str))/2;
+                    y = textHeight/2+(Math.abs(mPaint.ascent())-mPaint.descent())/2;
+                    break;
+                case Centering:
+                    x=(mMaxWidth-mPaint.measureText(str))/2;
+                    y = Math.abs(mPaint.ascent());
+                    break;
+                case Right:
+                    x=mMaxWidth-mPaint.measureText(str);
+                    y = Math.abs(mPaint.ascent());
+                    break;
+                case TopCentering:
+                    x=(mMaxWidth-mPaint.measureText(str))/2;
+                    y = Math.abs(mPaint.ascent());
+                    //hi=hi;
+                    break;
+                case LeftTop:
+                    x=0;
+                    y = Math.abs(mPaint.ascent());
+                    break;
+                case RightTop:
+                    x=mMaxWidth-mPaint.measureText(str);
+                    y = Math.abs(mPaint.ascent());
+                    break;
+            }
+            PrintLineOneString(str, x, y, mLineBitmap);
+        }
+    }
+
+    void PrintLineOneString(String str,float x, float y, Bitmap bmp)
     {
         if (mLineBitmap != null) {
             mPaint.setColor(Color.BLACK);
@@ -159,15 +241,17 @@ public class printer {
             can.drawText(str, x, y, mPaint);
         }
     }
-    public void PrintLineEnd()
+
+    public int PrintLineEnd()
     {
         if (mLineBitmap != null) {
             doHardwarePrint(mLineBitmap);
             mLineBitmap.recycle();
             mLineBitmap=null;
         }
+        return 0;
     }
-    public void PrintStringEx(String str, int textSize, boolean bUnderline, boolean bBold, printer.PrintType type) {
+    public void PrintStringEx(String str, int textSize, boolean bUnderline, boolean bBold, PrintType type) {
         mStrPrint = "";
         String strPrint = mStrPrint + str;
 
@@ -310,7 +394,7 @@ public class printer {
         return true;
     }
 
-    void PrintOneString(Canvas can, Paint paint, String str, int textHeight, Bitmap bmp, printer.PrintType type) {
+    void PrintOneString(Canvas can, Paint paint, String str, int textHeight, Bitmap bmp, PrintType type) {
         paint.setColor(Color.WHITE);
 
         can.drawRect(new Rect(0, 0, mMaxWidth, textHeight), paint);
@@ -339,6 +423,60 @@ public class printer {
         doHardwarePrint(bmp);
     }
 
+    public void PrintStringExForLablePaper(String str, int textSize, boolean bUnderline, boolean bBold, PrintType type, int labelWidth, int labelHeight) {
+        mStrPrint = "";
+        String strPrint = mStrPrint + str;
+
+        mPaint.setTextSize(textSize);
+        mPaint.setFakeBoldText(bBold);
+        mPaint.setUnderlineText(bUnderline);
+        Paint.FontMetrics font = mPaint.getFontMetrics();
+        int textHeight = (int) Math.ceil(font.descent - font.ascent);
+        Bitmap bmp = Bitmap.createBitmap(mMaxWidth, labelHeight, Bitmap.Config.ARGB_4444);
+        if (bmp != null) {
+            Canvas can = new Canvas(bmp);
+            int start = 0, end = 0;
+            int[] index = new int[2];
+            index[0] = 0;
+            index[1] = 0;
+            int offsetY = 0;
+            while (true) {
+                if (GetOneLineString(mPaint, strPrint, index, textHeight)) {
+                    PrintOneStringForPaper(can, mPaint,strPrint.substring(index[0], index[1]),offsetY,textHeight,type);
+                    offsetY+=textHeight;
+                } else
+                    break;
+            }
+        }
+        PrintBitmapAtCenter(bmp,labelWidth,labelHeight,false);
+    }
+    void PrintOneStringForPaper(Canvas can, Paint paint, String str, int offsetY, int textHeight, PrintType type) {
+//        paint.setColor(Color.WHITE);
+//
+//        can.drawRect(new Rect(0, 0, mMaxWidth, textHeight), paint);
+        float strWidth = paint.measureText(str);
+        float fleft = 0;
+        //zhangyong
+        float y = Math.abs(paint.ascent())+offsetY;
+        //
+        switch(type)
+        {
+            case Left:
+                fleft=0;
+                break;
+            case VerticalHorizontalCentering:
+            case Centering:
+                fleft=(mMaxWidth-strWidth)/2;
+                break;
+            case Right:
+                fleft=mMaxWidth-strWidth;
+                break;
+        }
+        if (str.length() > 0) {
+            paint.setColor(Color.BLACK);
+            can.drawText(str, fleft, y, paint);
+        }
+    }
 
     public void PrintBitmap(final Bitmap bm) {
         Bitmap bmp = Bitmap.createBitmap(mMaxWidth, bm.getHeight(), Bitmap.Config.ARGB_8888);
@@ -362,7 +500,54 @@ public class printer {
         doHardwarePrint(bmp);
     }
 
-    public void PrintBitmap(final Bitmap bm, int x, int y) {
+    public void PrintBitmapAtLeft(final Bitmap bm) {
+        Bitmap bmp = Bitmap.createBitmap(mMaxWidth, bm.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);//it's must need
+        canvas.drawRect(new RectF(0,0,bmp.getWidth(),bmp.getHeight()),paint);
+        canvas.drawBitmap(bm,0,0,paint);
+
+        doHardwarePrint(bmp);
+    }
+    public void PrintBitmapAtRight(final Bitmap bm) {
+        Bitmap bmp = Bitmap.createBitmap(mMaxWidth, bm.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);//it's must need
+        canvas.drawRect(new RectF(0,0,bmp.getWidth(),bmp.getHeight()),paint);
+        canvas.drawBitmap(bm,mMaxWidth-bm.getWidth(),0,paint);
+
+        doHardwarePrint(bmp);
+    }
+
+    /*
+     * Print bitmap In center of Lable Paper
+     * */
+    public void PrintBitmapAtCenter(Bitmap bm,int labelWidth,int labelHeight,boolean isPaper) {
+        int offsetY = 0;
+        int mustOffset = 5;
+        if (isPaper) {
+            int deltalHalf = (labelHeight - bm.getHeight())/2;
+            if ( deltalHalf > mustOffset*8) {
+                offsetY = deltalHalf - mustOffset*8;
+                if (offsetY < 0) {
+                    offsetY = 0;
+                }
+            }
+        }
+        Bitmap bmp = Bitmap.createBitmap(mMaxWidth,labelHeight - mustOffset*8, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);//it's must need
+        canvas.drawRect(new RectF(0,0,bmp.getWidth(),bmp.getHeight()),paint);
+//        int y = (labelHeight-bm.getHeight())/2;
+        canvas.drawBitmap(bm,(mMaxWidth-bm.getWidth())/2+(mMaxWidth-labelWidth)/2,offsetY,paint);
+        //com.olc.printchecker.Utils.stroageBitmap(bmp);
+        doHardwarePrint(bmp);
+    }
+
+    public void PrintBitmap(final Bitmap bm,int x,int y) {
         Bitmap bmp = Bitmap.createBitmap(mMaxWidth, bm.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         Paint paint = new Paint();
@@ -376,7 +561,7 @@ public class printer {
     /*
      * Print bitmap In center of Lable Paper
      * */
-    public void PrintBitmapAtCenter(Bitmap bm, int labelWidth, int labelHeight) {
+    public void PrintBitmapAtCenter(Bitmap bm,int labelWidth,int labelHeight) {
         Bitmap bmp = Bitmap.createBitmap(mMaxWidth,labelHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         Paint paint = new Paint();
@@ -394,17 +579,7 @@ public class printer {
         int nlen = bm.getHeight() * bm.getWidth();
         // bm.getConfig();
         int nBit=bm.getByteCount()/nlen;
-        if(nBit==2)
-        {
-            ShortBuffer dst = ShortBuffer.allocate(bm.getByteCount());
-            bm.copyPixelsToBuffer(dst);
-            dst.flip();
-            short[] buf = new short[nlen];
-            dst.get(buf);
 
-            int nwrite = PrintImage(buf);
-        }
-        else
         {
             ByteBuffer dst = ByteBuffer.allocate(bm.getByteCount());
             bm.copyPixelsToBuffer(dst);
@@ -419,8 +594,97 @@ public class printer {
 
     public void printBlankLine(int height){
         PrintLineInit(height);
-        PrintStringEx("",height,false,false, printer.PrintType.Centering);
+        PrintStringEx("",height,false,false, PrintType.Centering);
         PrintLineEnd();
     }
-}
 
+    public static String BytesToString(byte[] b) {
+        String ret = " ";
+        for (int i = 0; i < b.length; i++) {
+
+            ret += g_str[(int) (b[i] & 0xFF)];
+            ret += " ";
+        }
+        return ret.toUpperCase();
+    }
+
+    public static String BytesToString(byte[] b, int noffset, int ncount) {
+        String ret = " ";
+        for (int i = 0; i < ncount; i++) {
+
+            ret += g_str[(int) (b[i + noffset] & 0xFF)];
+            ret += " ";
+        }
+        return ret.toUpperCase();
+    }
+
+    public void getPageStatus()
+    {
+    }
+    public int PrintString(String str) {
+        String strPrint = mStrPrint + str;
+        mStrPrint = "";
+        // Paint pat=new Paint();
+        // m_pat.setTextSize(nHeight);
+        mPaint.setFakeBoldText(true);
+        // m_nHeight=nHeight;
+        Paint.FontMetrics font = mPaint.getFontMetrics();
+        int hi = (int) Math.ceil(font.descent - font.ascent);
+        Bitmap bmp = Bitmap.createBitmap(mMaxWidth, hi, Bitmap.Config.ARGB_4444);
+        if (bmp != null) {
+            Canvas can = new Canvas(bmp);
+            int start = 0, end = 0;
+            int[] index = new int[2];
+            index[0] = 0;
+            index[1] = 0;
+            while (true) {
+                if (GetOneString(mPaint, strPrint, index, hi)) {
+                    PrintOneString(can, mPaint,
+                            strPrint.substring(index[0], index[1]), hi, bmp,PrintType.Left);
+                } else
+                    break;
+            }
+            can.setBitmap(null);
+            bmp.recycle();
+            bmp=null;
+        }
+        return 0;
+    }
+    public void PrintString(String str, int nHeight) {
+        String strPrint = mStrPrint + str;
+        mStrPrint = "";
+        // Paint pat=new Paint();
+        mPaint.setTextSize(nHeight);
+        mPaint.setFakeBoldText(true);
+
+        //int nnnnn = str.indexOf("\r"), nline = 0;
+        mLineMaxTextSize = nHeight;
+        Paint.FontMetrics font = mPaint.getFontMetrics();
+        int hi = (int) Math.ceil(font.descent - font.ascent);
+        Bitmap bmp = Bitmap.createBitmap(mMaxWidth, hi, Bitmap.Config.ARGB_4444);
+        if (bmp != null) {
+            Canvas can = new Canvas(bmp);
+            int start = 0, end = 0;
+            int[] index = new int[2];
+            index[0] = 0;
+            index[1] = 0;
+            while (true) {
+                if (GetOneString(mPaint, strPrint, index, mLineMaxTextSize)) {
+                    PrintOneString(can, mPaint,
+                            strPrint.substring(index[0], index[1]), hi, bmp,PrintType.Left);
+                    //nline += hi;
+                } else
+                    break;
+            }
+            can.setBitmap(null);
+            bmp.recycle();
+            bmp=null;
+        }
+        //Log.e("123", "line=" + nline);
+
+        //return bmp;
+    }
+
+
+
+}

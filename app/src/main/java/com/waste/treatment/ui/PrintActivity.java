@@ -20,7 +20,6 @@ public class PrintActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print);
         mBinding = DataBindingUtil.setContentView(this,R.layout.activity_print);
-
         mBinding.printBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -29,7 +28,7 @@ public class PrintActivity extends AppCompatActivity {
                    mPrinter.PrintLineInit(50);
                    mPrinter.PrintLineStringByType(mBinding.printEdt.getText().toString(),40, printer.PrintType.Centering,false);
                    mPrinter.PrintLineEnd();
-                   mPrinter.Close();
+                //   mPrinter.Close();
                }
 
             }

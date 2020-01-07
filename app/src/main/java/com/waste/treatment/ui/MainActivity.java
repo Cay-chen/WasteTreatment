@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         mainBinding.gpsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,GpsActivity.class));
+                startActivity(new Intent(MainActivity.this,MapActivity.class));
 
             }
         });
