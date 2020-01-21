@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import com.waste.treatment.R;
 import com.waste.treatment.databinding.ActivityGenerateBinding;
-import com.waste.treatment.qber.BGAQRCodeUtil;
-import com.waste.treatment.qber.QRCodeEncoder;
+import com.waste.treatment.qrcode.BGAQRCodeUtil;
+import com.waste.treatment.qrcode.QRCodeEncoder;
 
 public class GenerateActivity extends AppCompatActivity {
     private ActivityGenerateBinding mBinding;

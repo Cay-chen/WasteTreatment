@@ -27,6 +27,5 @@
             android:textSize="18sp"
             android:background="@drawable/login_btn"
             android:text="拍照"/>
-
     </LinearLayout>
 </layout>

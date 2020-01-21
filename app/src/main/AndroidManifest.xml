@@ -3,17 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.waste.treatment">
     <!-- 访问网络，进行地图相关业务数据请求，包括地图数据，路线规划，POI检索等 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 获取网络状态，根据网络状态切换进行数据请求网络转换 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- 读取外置存储。如果开发者使用了so动态加载功能并且把so文件放在了外置存储区域，则需要申请该权限，否则不需要 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- 写外置存储。如果开发者使用了离线地图，并且数据写在外置存储区域，则需要申请该权限 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 获取网络状态，根据网络状态切换进行数据请求网络转换 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 读取外置存储。如果开发者使用了so动态加载功能并且把so文件放在了外置存储区域，则需要申请该权限，否则不需要 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 写外置存储。如果开发者使用了离线地图，并且数据写在外置存储区域，则需要申请该权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.preference.READ_PHONE_STATE" />
 
     <application
         android:name=".WasteTreatmentApplication"
@@ -24,7 +21,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.MapActivity"></activity>
+        <activity android:name=".ui.DaiActivity"></activity>
+        <!--         <activity android:name=".http.RxJavaTestActivity"></activity> -->
+        <activity android:name=".ui.PrintSetActivity" />
+        <activity android:name=".ui.ChangePasswordActivity" />
+        <activity android:name=".ui.TestFramgeActivity" />
+        <activity android:name=".ui.TestActivity" />
+        <activity android:name=".ui.EnteringActivity" />
+        <activity android:name=".ui.MapActivity" />
         <activity android:name=".ui.ImgActivity" />
         <activity android:name=".ui.PrintActivity" />
         <activity android:name=".ui.GenerateActivity" />
@@ -36,7 +40,7 @@
             android:name=".ui.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.LoginActivity"
+            android:name=".http.RxJavaTestActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,16 +48,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.baidu.location.f"
-                 android:enabled="true"
-                 android:process=":remote">
-        </service>
 
-
-        <!--百度地图-->
-            <meta-data
-                android:name="com.baidu.lbsapi.API_KEY"
-                android:value="3aFRd1FXNeP8jquqDAAtMcoern4RzQ6B" />
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" /> <!-- 百度地图 -->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="3aFRd1FXNeP8jquqDAAtMcoern4RzQ6B" />
     </application>
 
 </manifest>

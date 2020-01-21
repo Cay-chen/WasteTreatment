@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.waste.treatment.R;
 import com.waste.treatment.databinding.ActivityLoginBinding;
+import com.waste.treatment.util.Utils;
 
 public class LoginActivity extends AppCompatActivity {
      private ActivityLoginBinding mBinding;
@@ -18,19 +19,20 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        Utils.makeStatusBarTransparent(this);
         mBinding = DataBindingUtil.setContentView(this,R.layout.activity_login);
-        mBinding.ilTitle.tvTitle.setText("登录");
+        mBinding.ilTitle.tvTitle.setText(getResources().getString(R.string.login_btn_text));
         mBinding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mBinding.loginNameEdt.getText().toString().trim().isEmpty()||mBinding.loginPwdEdt.getText().toString().trim().isEmpty()){
 
-                    Toast.makeText(LoginActivity.this,"账号或密码不能为空",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this,getResources().getString(R.string.login_pwd_null),Toast.LENGTH_LONG).show();
 
                 }else {
                     if (mBinding.loginNameEdt.getText().toString().trim().equals("abc")&&mBinding.loginPwdEdt.getText().toString().trim().equals("123")){
 
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        startActivity(new Intent(LoginActivity.this, TestFramgeActivity.class));
                         finish();
                     }else {
                         mBinding.errorLl.setVisibility(View.VISIBLE);
